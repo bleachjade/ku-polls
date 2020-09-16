@@ -19,7 +19,12 @@ class IndexView(generic.ListView):
         """
         return Question.objects.filter(
             pub_date__lte=timezone.now()
-        ).order_by('-pub_date')[:5]
+        ).order_by('-pub_date')
+
+    # def show_valid_question(self):
+    #     return Question.objects.filter(
+    #         end_date__mt=timezone.now()
+    #     )
 
 
 class DetailView(generic.DetailView):
