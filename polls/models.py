@@ -24,10 +24,11 @@ class Question(models.Model):
     #         raise forms.ValidationError("End date should be greater than publish date.")
 
     def is_published(self):
-        pass
+        return timezone.now() >= self.pub_date
 
     def can_vote(self):
-        pass
+        return self.end_date > timezone.now() >= self.pub_date
+
     
 
     was_published_recently.admin_order_field = 'pub_date'
