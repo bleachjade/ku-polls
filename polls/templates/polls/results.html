@@ -6,10 +6,12 @@
 
 <ul>
 {% for choice in question.choice_set.all %}
-    <table>
-        <tr><th>{{ choice.choice_text }} -- {{ choice.votes }} 
-            </th></tr>
-    </table>
+    <span class="row font-choice">
+        
+            <span class="column">{{ choice.choice_text }}</span>
+            <span class="column">-- {{ choice.votes }}</span>
+        
+    </span>    
 {% endfor %}
 </ul>
 
