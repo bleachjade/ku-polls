@@ -1,6 +1,7 @@
 {% load static %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
+<h1 class="polls">KU POLLS</h1>
 <div>
 <h1>{{ question.question_text }}</h1>
 
@@ -15,7 +16,7 @@
 {% endfor %}
 </ul>
 
-<a href="{% url 'polls:detail' question.id %}">Vote again?</a>
+
 <br />
 <a href="{% url 'polls:index' %}"><---Go back to question list</a>
 </div>

@@ -2,6 +2,9 @@ li a {
     color: red;
 }
 
+.question {
+    color:lightcoral;
+}
 
 .column {
     float: left;
@@ -19,13 +22,19 @@ li a {
     font-size: 1.5rem;
 }
 
-
+.polls {
+    text-align: center;
+    background-color: white;
+    width: 100%;
+    height: auto;
+}
 
 div {
     box-sizing: border-box;
     border-color: black;
     padding: 0%;
     padding-left: 20%;
+    padding-right: 20%;
     border: 10px solid lightgoldenrodyellow;
     background-color: hsla(66, 71%, 86%, 0.9);
 }
