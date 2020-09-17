@@ -124,4 +124,29 @@ class QuestionModelTests(TestCase):
         recent_question = Question(pub_date=time)
         self.assertIs(recent_question.was_published_recently(), True)
 
+    def test_is_published_with_future_question(self):
+        """
+        is_published() return False if current date is 
+        before question's publication date.
+        """
+        time = timezone.now() + datetime.timedelta(days=10)
+        future_question = Question(pub_date=time)
+        self.assertIs(future_question.is_published(), False)
 
+    def test_is_published_with_old_question(self):
+        """
+        is_published() return Ture if current date is 
+        after question's publication date.
+        """
+        time = timezone.now() - datetime.timedelta(days=1)
+        old_question = Question(pub_date=time)
+        self.assertIs(old_question.is_published(), True)
+
+    def test_is_published_with_present_question(self):
+        """
+        is_published() return Ture if current date is 
+        on question's publication date.
+        """
+        time = timezone.now()
+        present_question = Question(pub_date=time)
+        self.assertIs(present_question.is_published(), True)
