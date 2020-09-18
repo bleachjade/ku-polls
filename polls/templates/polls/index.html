@@ -1,20 +1,28 @@
 {% load static %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="error-msg">{{ message }}</div>
+    {% endfor %}
+</ul>
+{% endif %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
 <h1 class="polls">KU POLLS</h1>
 <div>
-<h2>{% if latest_question_list %}
-    <ul>
-    {% for question in latest_question_list %}
-        <div>
-            <p>POLL's Question: <span class="question">{{ question.question_text }}</span></p>
-            <p>Publication Date: {{ question.pub_date }}</p>
-            {% if question.can_vote %}<p><a href="{% url 'polls:detail' question.id %}">Vote</a>{% endif %}
-            <a href="{% url 'polls:results' question.id %}" style="margin-left: 2rem">See result</a></p>
-        </div>
-        
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No polls are available.</p>
-{% endif %}</h2></div>
+    <h2>{% if latest_question_list %}
+        <ul>
+            {% for question in latest_question_list %}
+            <div>
+                <p>POLL's Question: <span class="question">{{ question.question_text }}</span></p>
+                <p>Publication Date: {{ question.pub_date }}</p>
+                {% if question.can_vote %}<p><a href="{% url 'polls:detail' question.id %}">Vote</a>{% endif %}
+                    <a href="{% url 'polls:results' question.id %}" style="margin-left: 2rem">See result</a></p>
+            </div>
+
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No polls are available.</p>
+        {% endif %}</h2>
+</div>
