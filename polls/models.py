@@ -8,9 +8,9 @@ from django.utils import timezone
 
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('date published')
-    # end_date = models.DateTimeField(widget=forms.DateTimeInput('%m/%d/%y %H:%M'))
-    end_date = models.DateTimeField('ending date', default=timezone.now())
+    pub_date = models.DateTimeField('date published', default=timezone.now)
+    #set end_date default to 10 days
+    end_date = models.DateTimeField('ending date', default=timezone.now() + datetime.timedelta(days=10))
 
     def __str__(self):
         return self.question_text
