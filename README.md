@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/bleachjade/ku-polls.svg?branch=master)](https://travis-ci.org/bleachjade/ku-polls)
+[![codecov](https://codecov.io/gh/bleachjade/ku-polls/branch/master/graph/badge.svg?token=A7WEJ154T1)](undefined)
 
 # Kasetsart Polls
 Web-application for conducting online polls and surveys.
