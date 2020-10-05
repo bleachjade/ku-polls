@@ -10,6 +10,7 @@ git:
 # Install any dependencies
 install:
   - pip install -r requirements.txt
+  - pip install codecov
     
 # script to run tests. Script can have many commands, one per line.
 script:
