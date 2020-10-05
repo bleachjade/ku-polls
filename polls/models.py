@@ -1,21 +1,23 @@
 import datetime
-from datetime import date, timedelta
 
-from django import forms
 from django.db import models
 from django.utils import timezone
 
 
 class Question(models.Model):
+    """Create a question model to use in a polls app."""
+
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published', default=timezone.now)
-    #set end_date default to 10 days
+    # set end_date default to 10 days
     end_date = models.DateTimeField('ending date', default=timezone.now() + datetime.timedelta(days=10))
 
     def __str__(self):
+        """Return str of the question text."""
         return self.question_text
 
     def was_published_recently(self):
+        """Check whether this question was published recently or not."""
         now = timezone.now()
         return now >= self.pub_date >= now - datetime.timedelta(days=1)
 
@@ -24,12 +26,12 @@ class Question(models.Model):
     #         raise forms.ValidationError("End date should be greater than publish date.")
 
     def is_published(self):
+        """Check whether this question is published or not."""
         return timezone.now() >= self.pub_date
 
     def can_vote(self):
+        """Check whether user can vote or not."""
         return self.end_date > timezone.now() >= self.pub_date
-
-    
 
     was_published_recently.admin_order_field = 'pub_date'
     was_published_recently.boolean = True
@@ -37,10 +39,12 @@ class Question(models.Model):
 
 
 class Choice(models.Model):
+    """Create a choice model to use in a polls app."""
+
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)
 
     def __str__(self):
+        """Return str of choice text."""
         return self.choice_text
-    
