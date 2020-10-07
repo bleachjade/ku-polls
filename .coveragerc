@@ -11,4 +11,4 @@ omit =
     polls/migrations/*
 # explicitly include the main app
 include =
-    tests/*
+    polls/tests.py
