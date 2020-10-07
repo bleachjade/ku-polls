@@ -1,12 +1,6 @@
+# .coveragerc to control coverage.py
 [run]
-# measure branch coverage, too
-branch = True
-# don't measure python standard library (this is the default)
-cover_pylib = False
-
 omit =
-    /usr/*
-    mysite/*
-    polls/migrations/*
-    *manage.py*
     *__init__*
+    *views.py*
+    *manage.py*
