@@ -164,3 +164,4 @@ class QuestionModelTests(TestCase):
         end_date = timezone.now()
         before = Question(pub_date=pub_date, end_date=end_date)
         self.assertIs(before.can_vote(), False)
+
