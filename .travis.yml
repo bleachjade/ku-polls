@@ -10,7 +10,7 @@ install:
   - pip install codecov
 
 script:
-  - coverage run manage.py test polls/test.py
+  - coverage run manage.py test
   
 
 after_success:
