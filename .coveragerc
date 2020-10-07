@@ -3,12 +3,10 @@
 branch = True
 # don't measure python standard library (this is the default)
 cover_pylib = False
-# omit uninteresting stuff
+
 omit =
     /usr/*
-    mysite/*   # the main application 
-    # TODO: omit migrations
+    mysite/*
     polls/migrations/*
-# explicitly include the main app
-include =
-    polls/tests.py
+    *manage.py*
+    *__init__*
