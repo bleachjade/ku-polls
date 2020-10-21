@@ -4,8 +4,9 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
 
-from .models import Question, Choice
+from .models import Question, Choice, UserVote
 
 
 class IndexView(generic.ListView):
@@ -56,9 +57,12 @@ class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
 
+
+@login_required
 def vote(request, question_id):
     """Vote function for polls app."""
     question = get_object_or_404(Question, pk=question_id)
+    poll_user = UserVote.objects.get(id=question_id)
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
@@ -68,8 +72,19 @@ def vote(request, question_id):
             'error_message': "You didn't select a choice.",
         })
     else:
-        selected_choice.votes += 1
-        selected_choice.save()
+        # selected_choice.votes += 1
+        # selected_choice.save()
+        #
+        # if choice_id:
+        #     choice = Choice.objects.get(id=choice_id)
+        #     vote = UserVote(question=question, choice=choice, user=request.user)
+        #     vote.save()
+        #     print(vote)
+        if request.user == poll_user.user:
+            print(poll_user.choice.votes)
+            poll_user.choice.votes += 1
+            poll_user.choice.save()
+            print(poll_user.choice.votes)
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
