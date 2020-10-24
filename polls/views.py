@@ -4,9 +4,10 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
+from django.db.models import F
 
-from .models import Question, Choice, UserVote
+from .models import Question, Choice, Vote
 
 
 class IndexView(generic.ListView):
@@ -62,7 +63,12 @@ class ResultsView(generic.DetailView):
 def vote(request, question_id):
     """Vote function for polls app."""
     question = get_object_or_404(Question, pk=question_id)
-    poll_user = UserVote.objects.get(id=question_id)
+    # user can vote once per poll.
+    if Vote.objects.filter(question_id=question_id, user_id=request.user.id).exists():
+        return render(request, 'polls/detail.html', {
+        'question': question,
+        'error_message': "You've already vote for this poll."
+        })
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
@@ -72,19 +78,17 @@ def vote(request, question_id):
             'error_message': "You didn't select a choice.",
         })
     else:
-        # selected_choice.votes += 1
-        # selected_choice.save()
-        #
-        # if choice_id:
-        #     choice = Choice.objects.get(id=choice_id)
-        #     vote = UserVote(question=question, choice=choice, user=request.user)
-        #     vote.save()
-        #     print(vote)
-        if request.user == poll_user.user:
-            print(poll_user.choice.votes)
-            poll_user.choice.votes += 1
-            poll_user.choice.save()
-            print(poll_user.choice.votes)
+        # print(Vote.objects.filter(question_id=question_id, user_id=request.user.id).exists())
+        # if request.user == Vote.authen_vote(request):
+        #     messages.error(request, "you've already vote for this poll")
+        #     # return redirect('polls:index')
+
+        # else:
+        selected_choice.votes +=1
+        selected_choice.save()
+        v = Vote(user=request.user, question=question)
+        v.save()
+    
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
@@ -97,3 +101,11 @@ def valid_vote(request, pk):
         messages.error(request, f'You are not allowed to vote in the "{question.question_text}" poll!')
         return redirect('polls:index')
     return render(request, 'polls/detail.html', {'question': question})
+
+def show_vote(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    choice = get_object_or_404(Choice, pk=pk)
+    if not Vote.objects.filter(question_id=pk, user_id=request.user.id).exists():
+        return redirect('polls:detail')
+    return render(request, 'polls/results.html', {'questiion': question, 'choice': choice})
+
