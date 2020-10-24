@@ -9,10 +9,11 @@ from django.contrib.auth.models import User
 class Question(models.Model):
     """Create a question model to use in a polls app."""
 
-    question_text = models.CharField(max_length=200)
+    question_text = models.CharField(max_length=200, unique=True)
     pub_date = models.DateTimeField('date published', default=timezone.now)
     # set end_date default to 10 days
     end_date = models.DateTimeField('ending date', default=timezone.now() + datetime.timedelta(days=10))
+    voters = models.ManyToManyField(User, through="Vote")
 
     def __str__(self):
         """Return str of the question text."""
@@ -35,6 +36,11 @@ class Question(models.Model):
         """Check whether user can vote or not."""
         return self.end_date > timezone.now() >= self.pub_date
 
+    
+    # @property
+    # def choices(self):
+    #     return self.choice_set.all()
+
     was_published_recently.admin_order_field = 'pub_date'
     was_published_recently.boolean = True
     was_published_recently.short_description = 'Published recently?'
@@ -52,12 +58,13 @@ class Choice(models.Model):
         """Return str of choice text."""
         return self.choice_text
 
-class UserVote(models.Model):
+class Vote(models.Model):
     """Create a model to track user vote."""
 
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
     user = models.ForeignKey(User, null=True, blank=True, 
                   on_delete=models.CASCADE)
+
 
     
