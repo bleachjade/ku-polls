@@ -3,20 +3,23 @@
 <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
 <h1 class="polls">KU POLLS</h1>
 <div>
-<h1>{{ question.question_text }}</h1>
+    <h1>{{ question.question_text }}</h1>
 
-<ul>
-{% for choice in question.choice_set.all %}
-    <span class="row font-choice">
-        
+    <ul>
+        {% for choice in question.choice_set.all %}
+        <span class="row font-choice">
+
             <span class="column">{{ choice.choice_text }}</span>
             <span class="column">-- {{ choice.votes }}</span>
-        
-    </span>    
-{% endfor %}
-</ul>
+
+        </span>
+        {% endfor %}
+        {% if user_exist %}
+        <span class="show-vote">{{ request.user }} has voted {% for vote in user_vote %}{{ vote.choice }}
+            {% endfor %}</span>{% else %}<span class="show-vote">You didn't vote for this polls</span>{% endif %}
+    </ul>
 
 
-<br />
-<a href="{% url 'polls:index' %}"><---Go back to question list</a>
-</div>
+    <br />
+    <a href="{% url 'polls:index' %}">
+        <---Go back to question list</a> </div>
