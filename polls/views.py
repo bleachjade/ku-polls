@@ -56,9 +56,11 @@ def vote(request, question_id):
     #     })
     try:
         configure()
+        get_client_ip(request)
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
         configure()
+        get_client_ip(request)
         # Redisplay the question voting form.
         return render(request, 'polls/detail.html', {
             'question': question,
@@ -67,11 +69,13 @@ def vote(request, question_id):
     else:
         if Vote.objects.filter(question_id=question_id, user_id=request.user.id).exists():
             configure()
+            get_client_ip(request)
             user_vote = question.vote_set.get(user=request.user)
             user_vote.choice = selected_choice
             user_vote.save()
         else:
             configure()
+            get_client_ip(request)
             selected_choice.vote_set.create(user=request.user, question=question)
 
         return HttpResponseRedirect(reverse('polls:results', args=(question_id,)))
@@ -105,4 +109,12 @@ def configure():
     formatter = logging.Formatter(fmt='%(levelname)-8s %(name)s: %(message)s')
     console_handler.setFormatter(formatter)
     root.addHandler(console_handler)
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
