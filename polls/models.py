@@ -13,7 +13,6 @@ class Question(models.Model):
     pub_date = models.DateTimeField('date published', default=timezone.now)
     # set end_date default to 10 days
     end_date = models.DateTimeField('ending date', default=timezone.now() + datetime.timedelta(days=10))
-    voters = models.ManyToManyField(User, through="Vote")
 
     def __str__(self):
         """Return str of the question text."""
@@ -51,12 +50,15 @@ class Choice(models.Model):
 
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
-    votes = models.IntegerField(default=0)
+    # vote = models.IntegerField(default=0)
     
 
     def __str__(self):
         """Return str of choice text."""
         return self.choice_text
+
+    def votes(self):
+        return self.question.vote_set.filter(choice=self).count()
 
 class Vote(models.Model):
     """Create a model to track user vote."""
@@ -64,7 +66,7 @@ class Vote(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
     user = models.ForeignKey(User, null=True, blank=True, 
-                  on_delete=models.CASCADE)
+                  on_delete=models.CASCADE, default=0)
 
 
     
