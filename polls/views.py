@@ -5,6 +5,7 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import F
 
 from .models import Question, Choice, Vote
 
@@ -47,12 +48,12 @@ def vote(request, question_id):
     """Vote function for polls app."""
     question = get_object_or_404(Question, pk=question_id)
     # user can vote once per poll.
-    if Vote.objects.filter(question_id=question_id, user_id=request.user.id).exists():
-        configure()
-        return render(request, 'polls/detail.html', {
-        'question': question,
-        'error_message': "You've already vote for this poll."
-        })
+    # if Vote.objects.filter(question_id=question_id, user_id=request.user.id).exists():
+    #     configure()
+    #     return render(request, 'polls/detail.html', {
+    #     'question': question,
+    #     'error_message': "You've already vote for this poll."
+    #     })
     try:
         configure()
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
@@ -64,20 +65,16 @@ def vote(request, question_id):
             'error_message': "You didn't select a choice.",
         })
     else:
-        # print(Vote.objects.filter(question_id=question_id, user_id=request.user.id).exists())
-        # if request.user == Vote.authen_vote(request):
-        #     messages.error(request, "you've already vote for this poll")
-        #     # return redirect('polls:index')
-        configure()
-        selected_choice.votes +=1
-        selected_choice.save()
-        v = Vote(user=request.user, question=question)
-        v.save()
-    
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-    return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+        if Vote.objects.filter(question_id=question_id, user_id=request.user.id).exists():
+            configure()
+            user_vote = question.vote_set.get(user=request.user)
+            user_vote.choice = selected_choice
+            user_vote.save()
+        else:
+            configure()
+            selected_choice.vote_set.create(user=request.user, question=question)
+
+        return HttpResponseRedirect(reverse('polls:results', args=(question_id,)))
 
 def valid_vote(request, pk):
     """Check if the polls is valid to vote or not."""
@@ -89,10 +86,9 @@ def valid_vote(request, pk):
 
 def show_vote(request, pk):
     question = get_object_or_404(Question, pk=pk)
-    choice = get_object_or_404(Choice, pk=pk)
-    if not Vote.objects.filter(question_id=pk, user_id=request.user.id).exists():
-        return redirect('polls:detail')
-    return render(request, 'polls/results.html', {'questiion': question, 'choice': choice})
+    user_vote = Vote.objects.filter(question_id=pk, user_id=request.user.id)
+    user_exist = Vote.objects.filter(question_id=pk, user_id=request.user.id).exists()
+    return render(request, 'polls/results.html', {'question': question, 'user_vote': user_vote, 'user_exist': user_exist})
 
 def configure():
     """Configure loggers and log handlers"""
